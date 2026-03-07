@@ -1,17 +1,63 @@
-# voz_clara
+# VozClara
 
-A new Flutter project.
+A free, offline-capable AAC (Augmentative and Alternative Communication)
+companion app built with Flutter. Designed for people with reduced speech
+capacity who need a fast, dignified way to communicate.
+
+## Accessibility First
+
+This project is built with WCAG 2.1 AA compliance as a primary requirement,
+not an afterthought. Every screen has a documented semantic structure,
+and all accessibility decisions are logged in `docs/accessibility-decisions.md`.
+
+## Tech Stack
+
+- Flutter 3.x / Dart 3.x
+- Clean Architecture
+- Cubit (flutter_bloc)
+- GetIt (dependency injection)
+- Hive (local persistence)
+- flutter_tts (offline text-to-speech)
+- GoRouter (navigation)
 
 ## Getting Started
+```bash
+flutter pub get
+flutter run
+```
 
-This project is a starting point for a Flutter application.
+No API keys or secrets are required to run this project.
+See `.env.example` for future configuration placeholders.
 
-A few resources to get you started if this is your first Flutter project:
+## Project Structure
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+See `docs/architecture.md` for the full architecture diagram and decisions.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Accessibility Testing
+
+See `docs/testing-checklist.md` for per-screen accessibility validation results.
+
+## License
+
+This project is licensed under the **Apache License 2.0**.
+
+See the LICENSE file for details.
+
+---
+
+## Author
+
+Miguel Oquendo  
+Senior Mobile Engineer – Flutter
+
+LinkedIn:  
+https://www.linkedin.com/in/miguel-angel-oquendo-rincon
+
+GitHub:  
+https://github.com/MiguelOquendoRincon
+
+---
+
+## Disclaimer
+
+This project is an educational and research initiative focused on building accessible Flutter applications and exploring inclusive design practices.

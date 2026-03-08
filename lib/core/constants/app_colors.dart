@@ -18,7 +18,7 @@ abstract final class AppColors {
   static const Color primary = Color(0xFF3B82F6);
 
   /// Light Blue - Icon backgrounds.
-  static const Color primaryContainer = Color(0xFFEFF6FF);
+  static const Color primaryContainer = Color(0xFFCADCFF);
 
   /// Text on [primaryContainer].
   static const Color onPrimaryContainer = Color(0xFF0D2E45);

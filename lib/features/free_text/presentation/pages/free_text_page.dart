@@ -5,6 +5,7 @@ import '../../../../core/accessibility/semantics_labels.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../shared/widgets/speak_button.dart';
 import '../../../../shared/widgets/accessible_button.dart';
+import '../../../../shared/widgets/voz_clara_app_bar.dart';
 
 /// Pantalla del Compositor de Mensajes.
 class FreeTextPage extends StatefulWidget {
@@ -85,37 +86,7 @@ class _FreeTextPageState extends State<FreeTextPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // HEADER
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.kSpacingM,
-                vertical: AppDimensions.kSpacingS,
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_rounded),
-                      onPressed: () => Navigator.maybePop(context),
-                    ),
-                  ),
-                  Semantics(
-                    header: true,
-                    label: 'Compositor de mensajes',
-                    child: Text(
-                      'Compositor de mensajes',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
+            const VozClaraAppBar(title: 'ESCRIBIR'),
 
             Expanded(
               child: SingleChildScrollView(

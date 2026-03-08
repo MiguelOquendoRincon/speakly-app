@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../settings/presentation/cubit/settings_cubit_cubit.dart';
 import '../../../../core/accessibility/semantics_labels.dart';
 import '../../../../core/constants/app_dimensions.dart';
+import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../widgets/category_card.dart';
 
 /// Pantalla principal — cuadrícula de selección de categorías.
@@ -41,9 +44,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
       body: SafeArea(
         child: Semantics(
           label: SemanticsLabels.categoriesScreenAnnouncement,
-          header: true,
           child: Column(
             children: [
+              const VozClaraAppBar(title: 'FRASES'),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(AppDimensions.kSpacingM),
@@ -225,30 +228,40 @@ class _QuickResponseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHC = context.select<SettingsCubit, bool>(
+      (cubit) => cubit.state.isHighContrast,
+    );
     final bool isDark = theme.brightness == Brightness.dark;
+
+    final Color effectiveColor = isHC ? theme.colorScheme.primary : color;
 
     return Semantics(
       label: label,
       hint: 'Tocar para reproducir: $label',
       button: true,
       excludeSemantics: true,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
           border: Border.all(
-            color: isDark
-                ? Colors.white10
-                : Colors.black.withValues(alpha: 0.05),
-            width: 1.5,
+            color: isHC
+                ? Colors.white
+                : (isDark
+                      ? Colors.white10
+                      : Colors.black.withValues(alpha: 0.05)),
+            width: isHC ? 3.0 : 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: isHC
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
         child: Material(
           color: Colors.transparent,
@@ -266,24 +279,35 @@ class _QuickResponseButton extends StatelessWidget {
                 children: [
                   // Circular Icon (Match design)
                   Container(
-                    width: 32,
-                    height: 32,
+                    width: 38,
+                    height: 38,
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
+                      color: isHC
+                          ? Colors.white
+                          : effectiveColor.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: color.withValues(alpha: 0.3),
-                        width: 1,
+                      border: isHC
+                          ? null
+                          : Border.all(
+                              color: effectiveColor.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        color: isHC ? Colors.black : effectiveColor,
+                        size: 20,
                       ),
                     ),
-                    child: Center(child: Icon(icon, color: color, size: 18)),
                   ),
                   const SizedBox(height: AppDimensions.kSpacingS),
                   Text(
                     label,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.w800,
+                      color: isHC ? Colors.white : theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: isHC ? 1.2 : null,
                     ),
                   ),
                 ],

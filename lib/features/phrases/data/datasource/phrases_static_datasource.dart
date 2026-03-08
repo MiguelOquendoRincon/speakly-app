@@ -445,7 +445,7 @@ class PhrasesStaticDatasource {
     Phrase(
       id: 'em_call',
       categoryId: 'emergency',
-      text: 'LLAMA AL 112',
+      text: 'LLAMA AL 123',
       icon: Icons.emergency_outlined,
       subtitle: 'Servicios de emergencia',
       isEmergency: true,

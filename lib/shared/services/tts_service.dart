@@ -17,11 +17,11 @@ import 'package:flutter_tts/flutter_tts.dart';
 /// What we DO manage is the timing: see TtsCubit._speak() for the
 /// SemanticsService.announce() delay pattern.
 class TtsService {
-  TtsService() {
+  TtsService({FlutterTts? tts}) : _tts = tts ?? FlutterTts() {
     _init();
   }
 
-  final FlutterTts _tts = FlutterTts();
+  final FlutterTts _tts;
   bool _isInitialized = false;
 
   Future<void> _init() async {

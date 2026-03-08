@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/app/service_locator.dart';
@@ -40,26 +41,26 @@ class _MainShellState extends State<MainShell> {
 
   static const _destinations = [
     _NavDestination(
-      icon: Icons.grid_view_rounded,
-      selectedIcon: Icons.grid_view_rounded,
+      icon: CupertinoIcons.chat_bubble_2,
+      selectedIcon: CupertinoIcons.chat_bubble_2_fill,
       label: 'Frases',
       semanticLabel: SemanticsLabels.bottomNavHome,
     ),
     _NavDestination(
-      icon: Icons.edit_outlined,
-      selectedIcon: Icons.edit_rounded,
-      label: 'Compositor',
+      icon: CupertinoIcons.keyboard,
+      selectedIcon: CupertinoIcons.keyboard,
+      label: 'Escribir',
       semanticLabel: SemanticsLabels.bottomNavFreeText,
     ),
     _NavDestination(
-      icon: Icons.star_outline_rounded,
-      selectedIcon: Icons.star_rounded,
+      icon: CupertinoIcons.heart,
+      selectedIcon: CupertinoIcons.heart_fill,
       label: 'Favoritos',
       semanticLabel: SemanticsLabels.bottomNavQuickPhrases,
     ),
     _NavDestination(
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings_rounded,
+      icon: CupertinoIcons.settings,
+      selectedIcon: CupertinoIcons.settings,
       label: 'Ajustes',
       semanticLabel: SemanticsLabels.bottomNavSettings,
     ),

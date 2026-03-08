@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
+import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../../../../core/constants/app_dimensions.dart';
 
 /// Pantalla de Favoritos — muestra las frases guardadas por el usuario.
@@ -10,37 +11,13 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
-            // HEADER - Diseño premium consistente
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.kSpacingM,
-                vertical: AppDimensions.kSpacingS,
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      'MIS FAVORITOS',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
+            const VozClaraAppBar(title: 'FAVORITOS'),
 
             Expanded(
               child: BlocBuilder<FavoritesCubit, FavoritesState>(
@@ -167,7 +144,6 @@ class _FavoriteItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Semantics(
       label: 'Frase favorita: $phrase',

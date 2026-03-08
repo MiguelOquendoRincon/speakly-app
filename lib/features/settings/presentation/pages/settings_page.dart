@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cubit.dart';
-import '../../../../core/accessibility/semantics_labels.dart';
+import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../../../../core/constants/app_dimensions.dart';
 
 /// Pantalla de Configuración de Accesibilidad.
@@ -26,36 +26,7 @@ class SettingsPage extends StatelessWidget {
           return SafeArea(
             child: Column(
               children: [
-                // CUSTOM HEADER
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.kSpacingM,
-                    vertical: AppDimensions.kSpacingS,
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back_rounded),
-                          onPressed: () => Navigator.maybePop(context),
-                        ),
-                      ),
-                      Semantics(
-                        header: true,
-                        child: Text(
-                          'Ajustes de Accesibilidad',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1),
+                const VozClaraAppBar(title: 'AJUSTES'),
 
                 Expanded(
                   child: SingleChildScrollView(
@@ -356,9 +327,7 @@ class _VoiceSpeedCard extends StatelessWidget {
               icon: const Icon(Icons.play_circle_filled_rounded),
               label: const Text('PROBAR VELOCIDAD DE VOZ'),
               style: TextButton.styleFrom(
-                backgroundColor: theme.colorScheme.primaryContainer.withValues(
-                  alpha: 0.3,
-                ),
+                backgroundColor: theme.colorScheme.primaryContainer,
                 foregroundColor: theme.colorScheme.primary,
                 padding: const EdgeInsets.symmetric(
                   vertical: AppDimensions.kSpacingM,

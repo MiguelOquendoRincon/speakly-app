@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/app/service_locator.dart';
-import 'package:voz_clara/core/accessibility/semantics_labels.dart';
 import 'package:voz_clara/core/constants/app_dimensions.dart';
 import 'package:voz_clara/features/phrases/presentation/cubit/phrases_cubit.dart';
 import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
 import 'package:voz_clara/shared/widgets/phrase_card.dart';
+import 'package:voz_clara/shared/widgets/voz_clara_app_bar.dart';
 
 /// Category detail screen — lists all phrases for a given category.
 ///
@@ -54,73 +54,85 @@ class _PhrasesView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        elevation: 0,
-        leading: Semantics(
-          label: SemanticsLabels.backToCategories,
-          button: true,
-          excludeSemantics: true,
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => Navigator.maybePop(context),
-          ),
-        ),
-        title: Text(categoryLabel, style: theme.textTheme.headlineMedium),
-      ),
-      body: BlocBuilder<PhrasesCubit, PhrasesState>(
-        builder: (context, phrasesState) {
-          if (phrasesState.status == PhrasesStatus.loading ||
-              phrasesState.status == PhrasesStatus.initial) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: SafeArea(
+        child: Column(
+          children: [
+            VozClaraAppBar(title: categoryLabel),
 
-          if (phrasesState.status == PhrasesStatus.error) {
-            return Center(
-              child: Text(
-                phrasesState.errorMessage ?? 'Error al cargar frases.',
-                style: theme.textTheme.bodyMedium,
-              ),
-            );
-          }
+            Expanded(
+              child: BlocBuilder<PhrasesCubit, PhrasesState>(
+                builder: (context, phrasesState) {
+                  if (phrasesState.status == PhrasesStatus.loading ||
+                      phrasesState.status == PhrasesStatus.initial) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-          return BlocBuilder<TtsCubit, TtsState>(
-            builder: (context, ttsState) {
-              return ListView.separated(
-                padding: const EdgeInsets.all(AppDimensions.kSpacingM),
-                itemCount: phrasesState.phrases.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: AppDimensions.kSpacingS),
-                itemBuilder: (context, i) {
-                  final phrase = phrasesState.phrases[i];
-                  final isSpeaking = ttsState.isActivePhrase(phrase.id);
-                  final isFavorite = phrasesState.isFavorite(phrase.id);
+                  if (phrasesState.status == PhrasesStatus.error) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppDimensions.kSpacingL),
+                        child: Text(
+                          phrasesState.errorMessage ??
+                              'Error al cargar frases.',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    );
+                  }
 
-                  return PhraseCard(
-                    phraseText: phrase.text,
-                    subtitle: phrase.subtitle,
-                    icon: phrase.icon,
-                    isFavorite: isFavorite,
-                    isEmergency: phrase.isEmergency,
-                    // isSpeaking drives the visual active state on the card.
-                    // Phase 3 PhraseCard doesn't use this yet — add it as
-                    // a border/highlight in the next UI pass if desired.
-                    onSpeak: () {
-                      if (isSpeaking) {
-                        context.read<TtsCubit>().stop();
-                      } else {
-                        context.read<TtsCubit>().speakPhrase(phrase.id);
-                      }
-                    },
-                    onFavoriteToggle: () {
-                      context.read<PhrasesCubit>().toggleFavorite(phrase.id);
+                  if (phrasesState.phrases.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No hay frases en esta categoría.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return BlocBuilder<TtsCubit, TtsState>(
+                    builder: (context, ttsState) {
+                      return ListView.separated(
+                        padding: const EdgeInsets.all(AppDimensions.kSpacingM),
+                        itemCount: phrasesState.phrases.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: AppDimensions.kSpacingM),
+                        itemBuilder: (context, i) {
+                          final phrase = phrasesState.phrases[i];
+                          final isSpeaking = ttsState.isActivePhrase(phrase.id);
+                          final isFavorite = phrasesState.isFavorite(phrase.id);
+
+                          return PhraseCard(
+                            phraseText: phrase.text,
+                            subtitle: phrase.subtitle,
+                            icon: phrase.icon,
+                            isFavorite: isFavorite,
+                            isEmergency: phrase.isEmergency,
+                            isSpeaking: isSpeaking,
+                            onSpeak: () {
+                              if (isSpeaking) {
+                                context.read<TtsCubit>().stop();
+                              } else {
+                                context.read<TtsCubit>().speakPhrase(phrase.id);
+                              }
+                            },
+                            onFavoriteToggle: () {
+                              context.read<PhrasesCubit>().toggleFavorite(
+                                phrase.id,
+                              );
+                            },
+                          );
+                        },
+                      );
                     },
                   );
                 },
-              );
-            },
-          );
-        },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import 'package:voz_clara/features/phrases/domain/repositories/phrases_repository.dart';
 import 'package:voz_clara/shared/services/tts_service.dart';
 

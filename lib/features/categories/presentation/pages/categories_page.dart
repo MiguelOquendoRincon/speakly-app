@@ -156,28 +156,28 @@ class _CategoryData {
 
 const _categories = [
   _CategoryData(
-    id: 'basicas',
+    id: 'basic_needs',
     label: 'NECESIDADES BÁSICAS',
     icon: Icons.restaurant_rounded,
   ),
   _CategoryData(
-    id: 'salud',
+    id: 'health',
     label: 'SALUD',
     icon: Icons.medical_services_rounded,
   ),
   _CategoryData(
-    id: 'emociones',
+    id: 'emotions',
     label: 'EMOCIONES',
     icon: Icons.sentiment_satisfied_alt_rounded,
   ),
   _CategoryData(
-    id: 'movilidad',
+    id: 'mobility',
     label: 'MOVILIDAD',
     icon: Icons.accessible_rounded,
   ),
   _CategoryData(id: 'social', label: 'SOCIAL', icon: Icons.chat_bubble_rounded),
   _CategoryData(
-    id: 'emergencia',
+    id: 'emergency',
     label: 'EMERGENCIA',
     icon: Icons.warning_rounded,
     isEmergency: true,

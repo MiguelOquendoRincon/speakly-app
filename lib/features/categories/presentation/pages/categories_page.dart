@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/accessibility/semantics_labels.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../widgets/category_card.dart';
@@ -29,16 +29,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   void initState() {
     super.initState();
-    // Announce screen identity when TalkBack/VoiceOver first lands here.
-    // This gives screen reader users immediate orientation context.
-    // WCAG 2.4.2 (Page Titled).
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SemanticsService.sendAnnouncement(
-        View.of(context),
-        SemanticsLabels.categoriesScreenAnnouncement,
-        TextDirection.ltr,
-      );
-    });
+    // Identidad de pantalla manejada vía propiedades semánticas en el primer elemento del build.
   }
 
   @override
@@ -48,90 +39,98 @@ class _CategoriesPageState extends State<CategoriesPage> {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppDimensions.kSpacingM),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // SECTION: Main categories title
-                    Semantics(
-                      header: true,
-                      child: Text(
-                        'CATEGORÍAS PRINCIPALES',
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppDimensions.kSpacingM),
-
-                    // Category grid — 2 columns.
-                    GridView.count(
-                      crossAxisCount: AppDimensions.kCategoryGridColumns,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      mainAxisSpacing: AppDimensions.kSpacingM,
-                      crossAxisSpacing: AppDimensions.kSpacingM,
-                      childAspectRatio: 0.9, // Adjust for larger icon area
-                      children: _categories.map((cat) {
-                        return CategoryCard(
-                          label: cat.label,
-                          icon: cat.icon,
-                          isEmergency: cat.isEmergency,
-                          onTap: () {
-                            // Phase 4: navigate to category detail
-                          },
-                        );
-                      }).toList(),
-                    ),
-
-                    const SizedBox(height: AppDimensions.kSpacingXL),
-
-                    // SECTION: Quick responses title
-                    Semantics(
-                      header: true,
-                      child: Text(
-                        'RESPUESTAS RÁPIDAS',
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppDimensions.kSpacingM),
-
-                    // Quick response row — horizontal, fixed items.
-                    Row(
-                      children: _quickResponses.map((qr) {
-                        return Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppDimensions.kSpacingXS,
-                            ),
-                            child: _QuickResponseButton(
-                              label: qr.label,
-                              icon: qr.icon,
-                              color: qr.color,
-                              onTap: () {
-                                // Phase 4: trigger TTS
-                              },
-                            ),
+        child: Semantics(
+          label: SemanticsLabels.categoriesScreenAnnouncement,
+          header: true,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppDimensions.kSpacingM),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // SECTION: Main categories title
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          'CATEGORÍAS PRINCIPALES',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
                           ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: AppDimensions.kSpacingXL),
-                  ],
+                        ),
+                      ),
+                      const SizedBox(height: AppDimensions.kSpacingM),
+
+                      // Category grid — 2 columns.
+                      GridView.count(
+                        crossAxisCount: AppDimensions.kCategoryGridColumns,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: AppDimensions.kSpacingM,
+                        crossAxisSpacing: AppDimensions.kSpacingM,
+                        childAspectRatio: 0.9, // Adjust for larger icon area
+                        children: _categories.map((cat) {
+                          return CategoryCard(
+                            label: cat.label,
+                            icon: cat.icon,
+                            isEmergency: cat.isEmergency,
+                            onTap: () {
+                              context.pushNamed(
+                                'categoryDetail',
+                                pathParameters: {'id': cat.id},
+                                extra: cat.label,
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+
+                      const SizedBox(height: AppDimensions.kSpacingXL),
+
+                      // SECTION: Quick responses title
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          'RESPUESTAS RÁPIDAS',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppDimensions.kSpacingM),
+
+                      // Quick response row — horizontal, fixed items.
+                      Row(
+                        children: _quickResponses.map((qr) {
+                          return Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimensions.kSpacingXS,
+                              ),
+                              child: _QuickResponseButton(
+                                label: qr.label,
+                                icon: qr.icon,
+                                color: qr.color,
+                                onTap: () {
+                                  // Phase 4: trigger TTS
+                                },
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: AppDimensions.kSpacingXL),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -144,25 +143,41 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
 class _CategoryData {
   const _CategoryData({
+    required this.id,
     required this.label,
     required this.icon,
     this.isEmergency = false,
   });
+  final String id;
   final String label;
   final IconData icon;
   final bool isEmergency;
 }
 
 const _categories = [
-  _CategoryData(label: 'NECESIDADES BÁSICAS', icon: Icons.restaurant_rounded),
-  _CategoryData(label: 'SALUD', icon: Icons.medical_services_rounded),
   _CategoryData(
+    id: 'basicas',
+    label: 'NECESIDADES BÁSICAS',
+    icon: Icons.restaurant_rounded,
+  ),
+  _CategoryData(
+    id: 'salud',
+    label: 'SALUD',
+    icon: Icons.medical_services_rounded,
+  ),
+  _CategoryData(
+    id: 'emociones',
     label: 'EMOCIONES',
     icon: Icons.sentiment_satisfied_alt_rounded,
   ),
-  _CategoryData(label: 'MOVILIDAD', icon: Icons.accessible_rounded),
-  _CategoryData(label: 'SOCIAL', icon: Icons.chat_bubble_rounded),
   _CategoryData(
+    id: 'movilidad',
+    label: 'MOVILIDAD',
+    icon: Icons.accessible_rounded,
+  ),
+  _CategoryData(id: 'social', label: 'SOCIAL', icon: Icons.chat_bubble_rounded),
+  _CategoryData(
+    id: 'emergencia',
     label: 'EMERGENCIA',
     icon: Icons.warning_rounded,
     isEmergency: true,

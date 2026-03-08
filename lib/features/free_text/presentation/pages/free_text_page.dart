@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
 import '../../../../core/accessibility/semantics_labels.dart';
@@ -19,6 +18,7 @@ class _FreeTextPageState extends State<FreeTextPage> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _textFieldFocus = FocusNode();
   bool _isSpeaking = false;
+  String? _accessibilityAnnouncement;
   static const int _maxLength = 300;
 
   @override
@@ -28,15 +28,16 @@ class _FreeTextPageState extends State<FreeTextPage> {
   }
 
   void _onTextChanged() {
-    setState(() {});
-    final remaining = _maxLength - _controller.text.length;
-    if (remaining == 50 || remaining == 20 || remaining == 10) {
-      SemanticsService.sendAnnouncement(
-        View.of(context),
-        SemanticsLabels.characterCount(remaining),
-        TextDirection.ltr,
-      );
-    }
+    setState(() {
+      final remaining = _maxLength - _controller.text.length;
+      if (remaining == 50 || remaining == 20 || remaining == 10) {
+        _accessibilityAnnouncement = SemanticsLabels.characterCount(remaining);
+        // Limpiar el anuncio brevemente para que el sistema detecte el cambio de texto si ocurre de nuevo
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) setState(() => _accessibilityAnnouncement = null);
+        });
+      }
+    });
   }
 
   Future<void> _onSpeak() async {
@@ -100,11 +101,15 @@ class _FreeTextPageState extends State<FreeTextPage> {
                       onPressed: () => Navigator.maybePop(context),
                     ),
                   ),
-                  Text(
-                    'Compositor de mensajes',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.w800,
+                  Semantics(
+                    header: true,
+                    label: 'Compositor de mensajes',
+                    child: Text(
+                      'Compositor de mensajes',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ],
@@ -189,10 +194,14 @@ class _FreeTextPageState extends State<FreeTextPage> {
 
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text(
-                        '${_controller.text.length} caracteres',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                      child: Semantics(
+                        liveRegion: true,
+                        label: _accessibilityAnnouncement,
+                        child: Text(
+                          '${_controller.text.length} caracteres',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ),

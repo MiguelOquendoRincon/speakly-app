@@ -1,4 +1,4 @@
-import '../../domain/entities/phrase.dart';
+import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import '../../domain/repositories/favorites_repository.dart';
 
 class MockFavoritesRepository implements FavoritesRepository {

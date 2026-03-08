@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:voz_clara/app/service_locator.dart';
+import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
 import 'package:voz_clara/features/settings/presentation/pages/settings_page.dart';
 import '../core/accessibility/semantics_labels.dart';
 import '../features/categories/presentation/pages/categories_page.dart';
@@ -77,26 +80,43 @@ class _MainShellState extends State<MainShell> {
 
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (i) => setState(() => _currentIndex = i),
-        backgroundColor: theme.colorScheme.surface,
-        elevation: 8,
-        destinations: _destinations.map((d) {
-          return NavigationDestination(
-            icon: Semantics(
-              // NavigationDestination uses its label for accessibility.
-              // We provide the semantic label directly on the destination.
-              excludeSemantics: true,
-              child: Icon(d.icon),
-            ),
-            selectedIcon: ExcludeSemantics(child: Icon(d.selectedIcon)),
-            label: d.label,
-            // tooltip carries the full semantic label for screen readers
-            // when NavigationDestination doesn't expose semanticLabel directly.
-            tooltip: d.semanticLabel,
-          );
-        }).toList(),
+      bottomNavigationBar: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          // Global Accessibility Announcer — listens to TtsCubit for status/text announcements.
+          // This replaces deprecated fire-and-forget Announce events with semantic properties.
+          BlocBuilder<TtsCubit, TtsState>(
+            bloc: sl<TtsCubit>(),
+            builder: (context, state) {
+              return Semantics(
+                liveRegion: true,
+                label: state.announcement,
+                child: const SizedBox.shrink(),
+              );
+            },
+          ),
+          NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (i) => setState(() => _currentIndex = i),
+            backgroundColor: theme.colorScheme.surface,
+            elevation: 8,
+            destinations: _destinations.map((d) {
+              return NavigationDestination(
+                icon: Semantics(
+                  // NavigationDestination uses its label for accessibility.
+                  // We provide the semantic label directly on the destination.
+                  excludeSemantics: true,
+                  child: Icon(d.icon),
+                ),
+                selectedIcon: ExcludeSemantics(child: Icon(d.selectedIcon)),
+                label: d.label,
+                // tooltip carries the full semantic label for screen readers
+                // when NavigationDestination doesn't expose semanticLabel directly.
+                tooltip: d.semanticLabel,
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }

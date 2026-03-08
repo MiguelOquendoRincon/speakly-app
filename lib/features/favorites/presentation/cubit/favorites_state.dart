@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import '../../domain/entities/phrase.dart';
+part of 'favorites_cubit.dart';
 
 abstract class FavoritesState extends Equatable {
   const FavoritesState();

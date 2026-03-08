@@ -1,7 +1,10 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/phrase.dart';
+import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import '../../domain/repositories/favorites_repository.dart';
-import 'favorites_state.dart';
+
+part 'favorites_state.dart';
 
 class FavoritesCubit extends Cubit<FavoritesState> {
   final FavoritesRepository repository;
@@ -27,9 +30,10 @@ class FavoritesCubit extends Cubit<FavoritesState> {
       final phrase = Phrase(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         text: text,
-        categoryId: categoryId,
+        categoryId: categoryId ?? '',
         createdAt: DateTime.now(),
         isCustom: isCustom,
+        icon: Icons.start,
       );
       await repository.addFavorite(phrase);
       await loadFavorites();

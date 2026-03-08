@@ -1,4 +1,4 @@
-import '../entities/phrase.dart';
+import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 
 abstract class FavoritesRepository {
   Future<List<Phrase>> getFavorites();

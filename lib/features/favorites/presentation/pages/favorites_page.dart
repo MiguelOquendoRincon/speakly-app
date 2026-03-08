@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
-import 'package:voz_clara/features/favorites/presentation/cubit/favorites_state.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/accessibility/semantics_labels.dart';
 
 /// Pantalla de Favoritos — muestra las frases guardadas por el usuario.
 class FavoritesPage extends StatelessWidget {
@@ -28,12 +26,15 @@ class FavoritesPage extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Text(
-                    'MIS FAVORITOS',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.5,
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      'MIS FAVORITOS',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                 ],

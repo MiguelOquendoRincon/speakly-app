@@ -42,11 +42,14 @@ class SettingsPage extends StatelessWidget {
                           onPressed: () => Navigator.maybePop(context),
                         ),
                       ),
-                      Text(
-                        'Ajustes de Accesibilidad',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.w800,
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          'Ajustes de Accesibilidad',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voz_clara/app/main_shell.dart';
 import 'package:voz_clara/features/settings/presentation/pages/settings_page.dart';
+import 'package:voz_clara/features/phrases/presentation/pages/phrases_page/phrases_page.dart';
 
 /// Named route constants — use these everywhere, never raw strings.
 abstract final class AppRoutes {
@@ -27,7 +28,11 @@ final GoRouter appRouter = GoRouter(
       name: 'categoryDetail',
       builder: (context, state) {
         final categoryId = state.pathParameters['id']!;
-        return Placeholder(key: ValueKey(categoryId));
+        final categoryLabel = state.extra as String? ?? 'Categoría';
+        return PhrasesPage(
+          categoryId: categoryId,
+          categoryLabel: categoryLabel,
+        );
       },
     ),
     GoRoute(

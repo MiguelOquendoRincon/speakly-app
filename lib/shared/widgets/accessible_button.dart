@@ -26,6 +26,7 @@ class AccessibleButton extends StatelessWidget {
     this.borderRadius,
     this.padding,
     this.elevation = 0,
+    this.side,
   });
 
   final VoidCallback? onPressed;
@@ -39,6 +40,7 @@ class AccessibleButton extends StatelessWidget {
   final BorderRadius? borderRadius;
   final EdgeInsetsGeometry? padding;
   final double elevation;
+  final BorderSide? side;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +59,7 @@ class AccessibleButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
           elevation: elevation,
+          side: side,
           padding:
               padding ??
               const EdgeInsets.symmetric(

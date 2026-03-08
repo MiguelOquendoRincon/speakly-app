@@ -1,39 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
 import '../../../../core/accessibility/semantics_labels.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../shared/widgets/speak_button.dart';
 import '../../../../shared/widgets/accessible_button.dart';
 
-/// Free text / Message Composer screen.
-///
-/// Semantic structure (from Phase 1 contract):
-///
-///   Header: "Escribe tu mensaje" (header: true)
-///   TextField: visible label "Mensaje a reproducir" (not placeholder only)
-///   Live region: character count — announced on change
-///   Speak button: disabled when empty, label changes when speaking
-///   Clear button: disabled when empty
-///
-/// Key accessibility decisions on this screen:
-///
-/// 1. VISIBLE LABEL on TextField (ADR-004):
-///    InputDecoration.labelText persists above the field when focused.
-///    hintText alone disappears on input — unusable for users who type slowly
-///    or pause mid-message. WCAG 3.3.2.
-///
-/// 2. CHARACTER COUNT as live region:
-///    SemanticsService.announce() is called when count crosses
-///    meaningful thresholds (not on every keystroke — that would be
-///    overwhelming for screen reader users). WCAG 4.1.3.
-///
-/// 3. SPEAK BUTTON disabled state communicated semantically:
-///    Semantics(enabled: false) causes TalkBack to announce "indisponible"
-///    so users know why the button is not activatable. WCAG 4.1.2.
-///
-/// 4. TTS + screen reader coexistence (Phase 4 full implementation):
-///    The TtsService will handle audio channel coordination.
-///    This screen prepares the Speak button state correctly.
+/// Pantalla del Compositor de Mensajes.
 class FreeTextPage extends StatefulWidget {
   const FreeTextPage({super.key});
 
@@ -55,11 +29,10 @@ class _FreeTextPageState extends State<FreeTextPage> {
 
   void _onTextChanged() {
     setState(() {});
-    // Only announce count at meaningful thresholds to avoid spamming
-    // screen reader users on every keystroke.
     final remaining = _maxLength - _controller.text.length;
     if (remaining == 50 || remaining == 20 || remaining == 10) {
-      SemanticsService.announce(
+      SemanticsService.sendAnnouncement(
+        View.of(context),
         SemanticsLabels.characterCount(remaining),
         TextDirection.ltr,
       );
@@ -69,19 +42,27 @@ class _FreeTextPageState extends State<FreeTextPage> {
   Future<void> _onSpeak() async {
     if (_controller.text.trim().isEmpty) return;
     setState(() => _isSpeaking = true);
-
-    // Phase 4: sl<TtsService>().speak(_controller.text)
-    // Simulated delay for Phase 3 UI development:
     await Future.delayed(const Duration(seconds: 2));
-
     if (mounted) setState(() => _isSpeaking = false);
   }
 
   void _onClear() {
     _controller.clear();
-    // Return focus to text field after clearing so the user
-    // doesn't lose their place in the navigation flow. WCAG 2.4.3.
     _textFieldFocus.requestFocus();
+  }
+
+  void _onSave() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    context.read<FavoritesCubit>().addFavorite(text, isCustom: true);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Frase guardada en favoritos'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -96,187 +77,194 @@ class _FreeTextPageState extends State<FreeTextPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final hasText = _controller.text.trim().isNotEmpty;
-    final remaining = _maxLength - _controller.text.length;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        elevation: 0,
-        // Back button — explicit label for screen readers.
-        leading: Semantics(
-          label: SemanticsLabels.backToCategories,
-          button: true,
-          excludeSemantics: true,
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => Navigator.maybePop(context),
-          ),
-        ),
-        title: Text(
-          'Compositor de mensajes',
-          style: theme.textTheme.headlineMedium,
-        ),
-      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.kSpacingM),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppDimensions.kSpacingL),
-
-              // Screen heading — announced as header for screen readers.
-              Semantics(
-                header: true,
-                child: Text(
-                  '¿Qué quieres decir?',
-                  style: theme.textTheme.displayLarge,
-                ),
+        child: Column(
+          children: [
+            // HEADER
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.kSpacingM,
+                vertical: AppDimensions.kSpacingS,
               ),
-              const SizedBox(height: AppDimensions.kSpacingS),
-
-              // Subtitle — decorative instruction, excluded from semantics
-              // because the TextField's label already communicates purpose.
-              ExcludeSemantics(
-                child: Text(
-                  'Escribe tu mensaje y toca Reproducir',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: AppDimensions.kSpacingXL),
-
-              // TEXT FIELD
-              // Explicit Semantics wrapper provides label + hint even when
-              // Flutter's built-in TextField semantics might not be enough.
-              Semantics(
-                label: SemanticsLabels.freeTextFieldLabel,
-                hint: SemanticsLabels.freeTextFieldHint,
-                textField: true,
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _textFieldFocus,
-                  maxLines: 5,
-                  minLines: 3,
-                  maxLength: _maxLength,
-                  // counterText hides the default counter — we provide
-                  // our own accessible version below.
-                  decoration: InputDecoration(
-                    // ADR-004: labelText persists above the field.
-                    // Never use hintText alone for a required field context.
-                    labelText: SemanticsLabels.freeTextFieldLabel,
-                    hintText: 'Empieza a escribir...',
-                    counterText: '',
-                    filled: true,
-                    fillColor: theme.colorScheme.primaryContainer.withOpacity(
-                      0.3,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.kRadiusM,
-                      ),
-                      borderSide: BorderSide(
-                        // Border must have 3:1 contrast against background.
-                        // WCAG 1.4.11.
-                        color: theme.colorScheme.outline,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.kRadiusM,
-                      ),
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.primary,
-                        width: 2,
-                      ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      onPressed: () => Navigator.maybePop(context),
                     ),
                   ),
-                  style: theme.textTheme.phraseText,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _onSpeak(),
-                ),
-              ),
-
-              const SizedBox(height: AppDimensions.kSpacingS),
-
-              // CHARACTER COUNT — right-aligned, announced as live region
-              // at thresholds (see _onTextChanged). Not announced on every
-              // keystroke to avoid overwhelming screen reader users.
-              Align(
-                alignment: Alignment.centerRight,
-                child: Semantics(
-                  // liveRegion: true would announce on every change —
-                  // too noisy. We use SemanticsService.announce() instead
-                  // at specific thresholds in _onTextChanged.
-                  liveRegion: false,
-                  label: SemanticsLabels.characterCount(remaining),
-                  child: Text(
-                    '$remaining caracteres restantes',
-                    style: theme.textTheme.labelSmall,
+                  Text(
+                    'Compositor de mensajes',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
+                ],
               ),
+            ),
+            const Divider(height: 1),
 
-              const Spacer(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppDimensions.kSpacingL),
+                child: Column(
+                  children: [
+                    const SizedBox(height: AppDimensions.kSpacingL),
 
-              // SPEAK BUTTON
-              SpeakButton(
-                onPressed: _onSpeak,
-                isSpeaking: _isSpeaking,
-                isEnabled: hasText,
-              ),
-
-              const SizedBox(height: AppDimensions.kSpacingM),
-
-              // CLEAR BUTTON — secondary action, outline style
-              SizedBox(
-                width: double.infinity,
-                child: AccessibleButton(
-                  onPressed: _onClear,
-                  semanticLabel: SemanticsLabels.clearButtonLabel,
-                  hint: 'Doble toque para borrar el mensaje escrito',
-                  isEnabled: hasText,
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: theme.colorScheme.primary,
-                  elevation: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ExcludeSemantics(
-                        child: Icon(
-                          Icons.delete_outline_rounded,
-                          color: hasText
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurfaceVariant,
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        '¿Qué quieres decir?',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.displaySmall?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
-                      const SizedBox(width: AppDimensions.kSpacingS),
-                      Text(
-                        'Borrar mensaje',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: hasText
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: AppDimensions.kSpacingS),
+
+                    Text(
+                      'Escribe tu mensaje y toca Reproducir',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+
+                    const SizedBox(height: AppDimensions.kSpacingXL),
+
+                    TextField(
+                      controller: _controller,
+                      focusNode: _textFieldFocus,
+                      maxLines: 5,
+                      minLines: 3,
+                      maxLength: _maxLength,
+                      decoration: InputDecoration(
+                        hintText: 'Empieza a escribir...',
+                        counterText: '',
+                        filled: true,
+                        fillColor: isDark
+                            ? theme.colorScheme.surface
+                            : Colors.white,
+                        contentPadding: const EdgeInsets.all(
+                          AppDimensions.kSpacingL,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.1,
+                            ),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.1,
+                            ),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 1.5,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                      style: theme.textTheme.titleLarge,
+                    ),
+
+                    const SizedBox(height: AppDimensions.kSpacingS),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${_controller.text.length} caracteres',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 48),
+
+                    SpeakButton(
+                      onPressed: _onSpeak,
+                      isSpeaking: _isSpeaking,
+                      isEnabled: hasText,
+                    ),
+
+                    const SizedBox(height: AppDimensions.kSpacingM),
+
+                    // BOTÓN GUARDAR FRASE (Conectado a FavoritesCubit)
+                    SizedBox(
+                      width: double.infinity,
+                      child: AccessibleButton(
+                        onPressed: _onSave,
+                        semanticLabel: 'Guardar frase en favoritos',
+                        hint:
+                            'Doble toque para agregar esta frase a tus favoritos',
+                        isEnabled: hasText,
+                        backgroundColor: isDark ? Colors.white10 : Colors.white,
+                        foregroundColor: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.kRadiusL,
+                        ),
+                        side: BorderSide(
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.2,
+                          ),
+                          width: 1.5,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppDimensions.kSpacingM,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.bookmark_add_rounded),
+                            const SizedBox(width: AppDimensions.kSpacingS),
+                            Text(
+                              'GUARDAR FRASE',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: AppDimensions.kSpacingM),
+
+                    if (hasText)
+                      TextButton.icon(
+                        onPressed: _onClear,
+                        icon: const Icon(Icons.delete_outline_rounded),
+                        label: const Text('BORRAR MENSAJE'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: AppDimensions.kSpacingM),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-// Extension to expose phraseText style via theme
-extension on TextTheme {
-  TextStyle? get phraseText => titleLarge;
 }

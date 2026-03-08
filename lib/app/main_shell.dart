@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:voz_clara/features/settings/presentation/pages/settings_page.dart';
 import '../core/accessibility/semantics_labels.dart';
 import '../features/categories/presentation/pages/categories_page.dart';
+import '../features/favorites/presentation/pages/favorites_page.dart';
 import '../features/free_text/presentation/pages/free_text_page.dart';
 
 /// Main shell with bottom navigation.
@@ -65,8 +67,8 @@ class _MainShellState extends State<MainShell> {
   static final _pages = [
     const CategoriesPage(),
     const FreeTextPage(),
-    const Placeholder(), // Phase 4: QuickPhrasesPage
-    const Placeholder(), // Phase 4: SettingsPage (routed separately above)
+    const FavoritesPage(),
+    const SettingsPage(),
   ];
 
   @override

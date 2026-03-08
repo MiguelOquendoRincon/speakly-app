@@ -4,40 +4,13 @@ import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cu
 import '../../../../core/accessibility/semantics_labels.dart';
 import '../../../../core/constants/app_dimensions.dart';
 
-/// Accessibility Settings screen.
+/// Pantalla de Configuración de Accesibilidad.
 ///
-/// Semantic structure (from Phase 1 contract):
-///
-///   Header: "Accesibilidad" (header: true)
-///   Section: "Preferencias visuales"
-///     - High contrast toggle (toggled: isOn)
-///     - Large text toggle (toggled: isOn)
-///     - Reduce motion toggle (toggled: isOn)
-///   Section: "Preferencias de audio"
-///     - Voice speed slider (slider role, value, increasedValue, decreasedValue)
-///     - Test voice speed button
-///
-/// Key accessibility decisions:
-///
-/// 1. TOGGLED vs CHECKED (ADR-003):
-///    SwitchListTile uses 'toggled' semantics, not 'checked'.
-///    toggled → announces as "activado/desactivado" (switch role)
-///    checked → announces as "marcado/desmarcado" (checkbox role)
-///    Using the wrong one causes VoiceOver/TalkBack to announce
-///    the wrong control type. WCAG 4.1.2.
-///
-/// 2. SLIDER SEMANTICS:
-///    The Slider widget must provide value, increasedValue, and
-///    decreasedValue so screen reader users can understand the
-///    current state and what gestures will change it. WCAG 4.1.2.
-///
-/// 3. SECTION HEADERS:
-///    Visual section labels use Semantics(header: true) so screen
-///    reader users can jump between sections. WCAG 2.4.6.
-///
-/// 4. SETTINGS DO NOT NAVIGATE:
-///    Toggling a setting changes state only. No unexpected navigation
-///    or context change on input. WCAG 3.2.2.
+/// Mejorada siguiendo la guía visual premium:
+/// - Tarjetas con iconos circulares.
+/// - Secciones claramente divididas.
+/// - Control de velocidad de voz con slider y etiquetas de escala.
+/// - Nota informativa al final.
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -47,87 +20,119 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        elevation: 0,
-        leading: Semantics(
-          label: 'Volver',
-          button: true,
-          excludeSemantics: true,
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => Navigator.maybePop(context),
-          ),
-        ),
-        title: Text('Configuración', style: theme.textTheme.headlineMedium),
-      ),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settings) {
           final cubit = context.read<SettingsCubit>();
           return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDimensions.kSpacingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // SECTION: Visual preferences
-                  _SectionHeader(label: 'Preferencias visuales'),
-                  const SizedBox(height: AppDimensions.kSpacingS),
-
-                  _AccessibleSwitchTile(
-                    label: SemanticsLabels.highContrastLabel,
-                    description: 'Aumenta la diferenciación de colores',
-                    icon: Icons.contrast,
-                    value: settings.isHighContrast,
-                    onChanged: (_) => cubit.toggleHighContrast(),
+            child: Column(
+              children: [
+                // CUSTOM HEADER
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.kSpacingM,
+                    vertical: AppDimensions.kSpacingS,
                   ),
-
-                  _AccessibleSwitchTile(
-                    label: SemanticsLabels.reduceMotionLabel,
-                    description: 'Minimiza los efectos de animación',
-                    icon: Icons.motion_photos_off_outlined,
-                    value: settings.reduceMotion,
-                    onChanged: (_) => cubit.toggleReduceMotion(),
-                  ),
-
-                  const SizedBox(height: AppDimensions.kSpacingXL),
-
-                  // SECTION: Audio preferences
-                  _SectionHeader(label: 'Preferencias de audio'),
-                  const SizedBox(height: AppDimensions.kSpacingM),
-
-                  _VoiceSpeedControl(
-                    rate: settings.ttsSpeechRate,
-                    onChanged: cubit.setSpeechRate,
-                  ),
-
-                  const SizedBox(height: AppDimensions.kSpacingXL),
-
-                  // Info note — decorative, excluded from semantics.
-                  // It provides no actionable information.
-                  ExcludeSemantics(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(AppDimensions.kSpacingM),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer.withOpacity(
-                          0.5,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                          AppDimensions.kRadiusM,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_rounded),
+                          onPressed: () => Navigator.maybePop(context),
                         ),
                       ),
-                      child: Text(
-                        'Estos ajustes personalizan tu experiencia en VozClara. '
-                        'Los cambios se guardan automáticamente.',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onPrimaryContainer,
+                      Text(
+                        'Ajustes de Accesibilidad',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(AppDimensions.kSpacingL),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // SECTION: Preferencias Visuales
+                        _SectionHeader(label: 'PREFERENCIAS VISUALES'),
+                        const SizedBox(height: AppDimensions.kSpacingM),
+
+                        _SettingSwitchCard(
+                          label: 'Modo alto contraste',
+                          description: 'Aumenta la diferenciación de colores',
+                          icon: Icons.contrast_rounded,
+                          value: settings.isHighContrast,
+                          onChanged: (_) => cubit.toggleHighContrast(),
+                        ),
+                        const SizedBox(height: AppDimensions.kSpacingM),
+
+                        _SettingSwitchCard(
+                          label: 'Texto grande',
+                          description:
+                              'Aumenta el tamaño de la fuente del sistema',
+                          icon: Icons.text_fields_rounded,
+                          value:
+                              false, // Placeholder para futura implementación
+                          onChanged: (_) {},
+                        ),
+                        const SizedBox(height: AppDimensions.kSpacingM),
+
+                        _SettingSwitchCard(
+                          label: 'Movimiento reducido',
+                          description: 'Minimiza los efectos de animación',
+                          icon: Icons.motion_photos_off_rounded,
+                          value: settings.reduceMotion,
+                          onChanged: (_) => cubit.toggleReduceMotion(),
+                        ),
+
+                        const SizedBox(height: AppDimensions.kSpacingXL),
+
+                        // SECTION: Preferencias de Audio
+                        _SectionHeader(label: 'PREFERENCIAS DE AUDIO'),
+                        const SizedBox(height: AppDimensions.kSpacingM),
+
+                        _VoiceSpeedCard(
+                          rate: settings.ttsSpeechRate,
+                          onChanged: cubit.setSpeechRate,
+                        ),
+
+                        const SizedBox(height: AppDimensions.kSpacingXL),
+
+                        // FOOTER INFO
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(
+                            AppDimensions.kSpacingL,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer
+                                .withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.kRadiusL,
+                            ),
+                          ),
+                          child: Text(
+                            'Estos ajustes ayudan a personalizar tu experiencia en VozClara. Los cambios se guardan automáticamente.',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.kSpacingXL),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -135,10 +140,6 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// Private sub-widgets
-// ---------------------------------------------------------------------------
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});
@@ -150,9 +151,9 @@ class _SectionHeader extends StatelessWidget {
     return Semantics(
       header: true,
       child: Text(
-        label.toUpperCase(),
-        style: theme.textTheme.labelSmall?.copyWith(
-          fontWeight: FontWeight.w700,
+        label,
+        style: theme.textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w900,
           letterSpacing: 1.2,
           color: theme.colorScheme.onSurfaceVariant,
         ),
@@ -161,8 +162,8 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _AccessibleSwitchTile extends StatelessWidget {
-  const _AccessibleSwitchTile({
+class _SettingSwitchCard extends StatelessWidget {
+  const _SettingSwitchCard({
     required this.label,
     required this.description,
     required this.icon,
@@ -180,146 +181,215 @@ class _AccessibleSwitchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // SwitchListTile automatically applies toggled semantics (not checked).
-    // We wrap with explicit Semantics to also provide a contextual hint
-    // that announces the current state and available action. ADR-003.
-    return Semantics(
-      label: label,
-      hint: value
-          ? 'Activado. Doble toque para desactivar'
-          : 'Desactivado. Doble toque para activar',
-      toggled: value,
-      // excludeSemantics: true here would suppress SwitchListTile's own
-      // semantics. We DON'T exclude — SwitchListTile's semantics are
-      // correct; we only add the hint via the outer wrapper.
-      child: SwitchListTile(
-        value: value,
-        onChanged: onChanged,
-        title: Text(label, style: theme.textTheme.titleLarge),
-        subtitle: Text(description, style: theme.textTheme.bodyMedium),
-        secondary: Icon(icon, color: theme.colorScheme.primary),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.kSpacingM,
-          vertical: AppDimensions.kSpacingXS,
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.05),
+          width: 1.5,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.kRadiusM),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.kSpacingM),
+        child: Row(
+          children: [
+            // Circular Icon Background
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withValues(
+                  alpha: 0.5,
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: theme.colorScheme.primary, size: 24),
+            ),
+            const SizedBox(width: AppDimensions.kSpacingM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Switch.adaptive(
+              value: value,
+              onChanged: onChanged,
+              activeColor: theme.colorScheme.primary,
+            ),
+          ],
         ),
-        tileColor: theme.colorScheme.surface,
       ),
     );
   }
 }
 
-class _VoiceSpeedControl extends StatelessWidget {
-  const _VoiceSpeedControl({required this.rate, required this.onChanged});
+class _VoiceSpeedCard extends StatelessWidget {
+  const _VoiceSpeedCard({required this.rate, required this.onChanged});
 
   final double rate;
   final ValueChanged<double> onChanged;
 
-  // Discrete steps for the slider — more predictable for motor-impaired users.
-  static const _min = 0.1;
-  static const _max = 1.0;
-  static const _divisions = 9;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final rateLabel = SemanticsLabels.ttsSpeechRateValue(rate);
-    final fasterRate = (rate + 0.1).clamp(_min, _max);
-    final slowerRate = (rate - 0.1).clamp(_min, _max);
 
     return Container(
-      padding: const EdgeInsets.all(AppDimensions.kSpacingM),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppDimensions.kRadiusM),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.05),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
+      padding: const EdgeInsets.all(AppDimensions.kSpacingM),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              ExcludeSemantics(
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withValues(
+                    alpha: 0.5,
+                  ),
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(
-                  Icons.record_voice_over_outlined,
+                  Icons.record_voice_over_rounded,
                   color: theme.colorScheme.primary,
+                  size: 24,
                 ),
               ),
               const SizedBox(width: AppDimensions.kSpacingM),
-              Text(
-                SemanticsLabels.ttsSpeechRateLabel,
-                style: theme.textTheme.titleLarge,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Velocidad de voz',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    Text(
+                      'Ajusta el ritmo al que se reproduce el texto',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: AppDimensions.kSpacingM),
+          const SizedBox(height: AppDimensions.kSpacingL),
 
-          // Slider with full semantic context.
-          // value, increasedValue, decreasedValue allow screen reader users
-          // to know current state + what gestures will do. WCAG 4.1.2.
-          Semantics(
-            label: SemanticsLabels.ttsSpeechRateLabel,
-            hint: SemanticsLabels.ttsSpeechRateHint,
-            slider: true,
-            value: rateLabel,
-            increasedValue: SemanticsLabels.ttsSpeechRateValue(fasterRate),
-            decreasedValue: SemanticsLabels.ttsSpeechRateValue(slowerRate),
-            excludeSemantics: true,
-            child: Slider(
-              value: rate,
-              min: _min,
-              max: _max,
-              divisions: _divisions,
-              onChanged: onChanged,
+          // Labels for Scale
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.kSpacingM,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _ScaleLabel(label: 'LENTO'),
+                _ScaleLabel(label: 'NORMAL'),
+                _ScaleLabel(label: 'RÁPIDO'),
+              ],
             ),
           ),
 
-          // Speed labels below slider — decorative (excluded from semantics
-          // because the Slider's value/increasedValue/decreasedValue already
-          // communicates this to screen reader users).
-          ExcludeSemantics(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.kSpacingXS,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Lento', style: theme.textTheme.labelSmall),
-                  Text('Normal', style: theme.textTheme.labelSmall),
-                  Text('Rápido', style: theme.textTheme.labelSmall),
-                ],
-              ),
-            ),
+          Slider(
+            value: rate,
+            min: 0.1,
+            max: 1.0,
+            divisions: 9,
+            activeColor: theme.colorScheme.primary,
+            onChanged: onChanged,
           ),
 
-          const SizedBox(height: AppDimensions.kSpacingM),
+          const SizedBox(height: AppDimensions.kSpacingS),
 
-          // Test button — gives immediate feedback on current speed setting.
+          // Test Button
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton.icon(
+            child: TextButton.icon(
               onPressed: () {
-                // Phase 4: sl<TtsService>().speak('Esta es la velocidad seleccionada')
+                // Phase 4: trigger test speak
               },
-              icon: ExcludeSemantics(
-                child: const Icon(Icons.play_circle_outline_rounded),
-              ),
-              label: const Text('Probar velocidad de voz'),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(
-                  double.infinity,
-                  AppDimensions.kMinTouchTarget,
+              icon: const Icon(Icons.play_circle_filled_rounded),
+              label: const Text('PROBAR VELOCIDAD DE VOZ'),
+              style: TextButton.styleFrom(
+                backgroundColor: theme.colorScheme.primaryContainer.withValues(
+                  alpha: 0.3,
+                ),
+                foregroundColor: theme.colorScheme.primary,
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppDimensions.kSpacingM,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppDimensions.kRadiusM),
+                  borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
+                ),
+                textStyle: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ScaleLabel extends StatelessWidget {
+  final String label;
+  const _ScaleLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Text(
+      label,
+      style: theme.textTheme.labelSmall?.copyWith(
+        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+        fontWeight: FontWeight.w900,
+        fontSize: 10,
+        letterSpacing: 0.8,
       ),
     );
   }

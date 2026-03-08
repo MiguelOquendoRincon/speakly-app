@@ -246,11 +246,9 @@ class _QuickResponseButton extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
           border: Border.all(
-            color: isHC
-                ? Colors.white
-                : (isDark
-                      ? Colors.white10
-                      : Colors.black.withValues(alpha: 0.05)),
+            color: isDark
+                ? Colors.white12
+                : Colors.black.withValues(alpha: 0.05),
             width: isHC ? 3.0 : 1.5,
           ),
           boxShadow: isHC
@@ -283,7 +281,7 @@ class _QuickResponseButton extends StatelessWidget {
                     height: 38,
                     decoration: BoxDecoration(
                       color: isHC
-                          ? Colors.white
+                          ? effectiveColor
                           : effectiveColor.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       border: isHC

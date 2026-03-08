@@ -41,6 +41,9 @@ abstract final class AppColors {
   /// Disable Button Background
   static const Color disable = Color(0xFFECECEC);
 
+  /// Divider Color
+  static const Color divider = Color(0xFFCECECE);
+
   // --- High contrast theme overrides ---
 
   static const Color hcSurface = Color(0xFF000000);

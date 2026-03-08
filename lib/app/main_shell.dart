@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/app/service_locator.dart';
 import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
+import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cubit.dart';
 import 'package:voz_clara/features/settings/presentation/pages/settings_page.dart';
 import '../core/accessibility/semantics_labels.dart';
 import '../features/categories/presentation/pages/categories_page.dart';
@@ -78,6 +79,9 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHC = context.select<SettingsCubit, bool>(
+      (cubit) => cubit.state.isHighContrast,
+    );
 
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
@@ -109,7 +113,9 @@ class _MainShellState extends State<MainShell> {
                   excludeSemantics: true,
                   child: Icon(d.icon),
                 ),
-                selectedIcon: ExcludeSemantics(child: Icon(d.selectedIcon)),
+                selectedIcon: ExcludeSemantics(
+                  child: Icon(d.selectedIcon, color: theme.colorScheme.surface),
+                ),
                 label: d.label,
                 // tooltip carries the full semantic label for screen readers
                 // when NavigationDestination doesn't expose semanticLabel directly.

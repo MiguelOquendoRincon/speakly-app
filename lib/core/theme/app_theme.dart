@@ -14,6 +14,7 @@ abstract final class AppTheme {
     primaryContainer: AppColors.primaryContainer,
     onPrimaryContainer: AppColors.onPrimaryContainer,
     disableButtonBg: AppColors.disable,
+    dividerColor: AppColors.divider,
   );
 
   static ThemeData get highContrastTheme => _buildTheme(
@@ -24,6 +25,7 @@ abstract final class AppTheme {
     primaryContainer: AppColors.hcPrimaryContainer,
     onPrimaryContainer: AppColors.hcOnPrimaryContainer,
     disableButtonBg: AppColors.hcPrimaryContainer,
+    dividerColor: AppColors.hcPrimary,
   );
 
   static ThemeData _buildTheme({
@@ -34,6 +36,7 @@ abstract final class AppTheme {
     required Color primaryContainer,
     required Color onPrimaryContainer,
     required Color disableButtonBg,
+    required Color dividerColor,
   }) {
     return ThemeData(
       useMaterial3: true,
@@ -62,7 +65,7 @@ abstract final class AppTheme {
       // Accessibility: ensure focus ring is always visible
       focusColor: primary.withValues(alpha: 0.2),
       highlightColor: primary.withValues(alpha: 0.1),
-
+      dividerTheme: DividerThemeData(color: dividerColor),
       // Enforce minimum touch targets via ButtonTheme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

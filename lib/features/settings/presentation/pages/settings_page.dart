@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:voz_clara/app/service_locator.dart';
+import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
 import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cubit.dart';
 import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../../../../core/constants/app_dimensions.dart';
@@ -322,7 +324,9 @@ class _VoiceSpeedCard extends StatelessWidget {
             width: double.infinity,
             child: TextButton.icon(
               onPressed: () {
-                // Phase 4: trigger test speak
+                sl<TtsCubit>().speakFreeText(
+                  'Hola, esta es una prueba de la velocidad de voz en VozClara.',
+                );
               },
               icon: const Icon(Icons.play_circle_filled_rounded),
               label: const Text('PROBAR VELOCIDAD DE VOZ'),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
@@ -135,7 +136,7 @@ class _FreeTextPageState extends State<FreeTextPage> {
                           AppDimensions.kSpacingL,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
                             color: theme.colorScheme.primary.withValues(
                               alpha: 0.1,
@@ -143,7 +144,7 @@ class _FreeTextPageState extends State<FreeTextPage> {
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
                             color: theme.colorScheme.primary.withValues(
                               alpha: 0.1,
@@ -151,7 +152,7 @@ class _FreeTextPageState extends State<FreeTextPage> {
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
                             color: theme.colorScheme.primary,
                             width: 1.5,
@@ -169,7 +170,9 @@ class _FreeTextPageState extends State<FreeTextPage> {
                         liveRegion: true,
                         label: _accessibilityAnnouncement,
                         child: Text(
-                          '${_controller.text.length} caracteres',
+                          _controller.text.isEmpty
+                              ? ''
+                              : '${_controller.text.length} caracteres',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -179,10 +182,13 @@ class _FreeTextPageState extends State<FreeTextPage> {
 
                     const SizedBox(height: 48),
 
-                    SpeakButton(
-                      onPressed: _onSpeak,
-                      isSpeaking: _isSpeaking,
-                      isEnabled: hasText,
+                    SizedBox(
+                      height: 70,
+                      child: SpeakButton(
+                        onPressed: _onSpeak,
+                        isSpeaking: _isSpeaking,
+                        isEnabled: hasText,
+                      ),
                     ),
 
                     const SizedBox(height: AppDimensions.kSpacingM),
@@ -190,13 +196,15 @@ class _FreeTextPageState extends State<FreeTextPage> {
                     // BOTÓN GUARDAR FRASE (Conectado a FavoritesCubit)
                     SizedBox(
                       width: double.infinity,
+                      height: 60,
                       child: AccessibleButton(
                         onPressed: _onSave,
                         semanticLabel: 'Guardar frase en favoritos',
                         hint:
                             'Doble toque para agregar esta frase a tus favoritos',
                         isEnabled: hasText,
-                        backgroundColor: isDark ? Colors.white10 : Colors.white,
+                        // backgroundColor: isDark ? Colors.white10 : Colors.white,
+                        backgroundColor: theme.colorScheme.primaryContainer,
                         foregroundColor: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(
                           AppDimensions.kRadiusL,
@@ -213,7 +221,7 @@ class _FreeTextPageState extends State<FreeTextPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.bookmark_add_rounded),
+                            const Icon(Icons.bookmark_add_rounded, size: 25.0),
                             const SizedBox(width: AppDimensions.kSpacingS),
                             Text(
                               'GUARDAR FRASE',
@@ -230,12 +238,32 @@ class _FreeTextPageState extends State<FreeTextPage> {
                     const SizedBox(height: AppDimensions.kSpacingM),
 
                     if (hasText)
-                      TextButton.icon(
-                        onPressed: _onClear,
-                        icon: const Icon(Icons.delete_outline_rounded),
-                        label: const Text('BORRAR MENSAJE'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: theme.colorScheme.onSurfaceVariant,
+                      SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: TextButton.icon(
+                          onPressed: _onClear,
+                          icon: const Icon(
+                            CupertinoIcons.delete_solid,
+                            size: 22.0,
+                          ),
+                          label: Text(
+                            'BORRAR MENSAJE',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: theme.colorScheme.onError,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.colorScheme.onError,
+                            backgroundColor: theme.colorScheme.error,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.kRadiusL,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                   ],

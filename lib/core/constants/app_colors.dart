@@ -38,6 +38,9 @@ abstract final class AppColors {
   /// Success / confirmation.
   static const Color success = Color(0xFF10B981);
 
+  /// Disable Button Background
+  static const Color disable = Color(0xFFECECEC);
+
   // --- High contrast theme overrides ---
 
   static const Color hcSurface = Color(0xFF000000);

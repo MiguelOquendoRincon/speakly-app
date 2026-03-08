@@ -13,6 +13,7 @@ abstract final class AppTheme {
     primary: AppColors.primary,
     primaryContainer: AppColors.primaryContainer,
     onPrimaryContainer: AppColors.onPrimaryContainer,
+    disableButtonBg: AppColors.disable,
   );
 
   static ThemeData get highContrastTheme => _buildTheme(
@@ -22,6 +23,7 @@ abstract final class AppTheme {
     primary: AppColors.hcPrimary,
     primaryContainer: AppColors.hcPrimaryContainer,
     onPrimaryContainer: AppColors.hcOnPrimaryContainer,
+    disableButtonBg: AppColors.hcPrimaryContainer,
   );
 
   static ThemeData _buildTheme({
@@ -31,6 +33,7 @@ abstract final class AppTheme {
     required Color primary,
     required Color primaryContainer,
     required Color onPrimaryContainer,
+    required Color disableButtonBg,
   }) {
     return ThemeData(
       useMaterial3: true,
@@ -67,6 +70,7 @@ abstract final class AppTheme {
             AppDimensions.kMinTouchTarget,
             AppDimensions.kMinTouchTarget,
           ),
+          disabledBackgroundColor: disableButtonBg,
         ),
       ),
       iconButtonTheme: IconButtonThemeData(

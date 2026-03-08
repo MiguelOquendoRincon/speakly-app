@@ -34,7 +34,7 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<TtsCubit>(
     () => TtsCubit(sl<TtsService>(), sl<PhrasesRepository>()),
   );
-  sl.registerFactory<SettingsCubit>(() => SettingsCubit());
+  sl.registerFactory<SettingsCubit>(() => SettingsCubit(sl<TtsService>()));
   sl.registerFactory<FavoritesCubit>(
     () => FavoritesCubit(repository: sl<FavoritesRepository>()),
   );

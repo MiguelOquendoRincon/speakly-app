@@ -60,11 +60,11 @@ class SpeakButton extends StatelessWidget {
         children: [
           Icon(
             isSpeaking ? Icons.stop_rounded : Icons.volume_up_rounded,
-            size: 22,
+            size: 28,
           ),
           const SizedBox(width: AppDimensions.kSpacingS),
           Text(
-            isSpeaking ? 'Detener' : 'Reproducir',
+            isSpeaking ? 'DETENER' : 'REPRODUCIR',
             style: theme.textTheme.titleLarge?.copyWith(
               color: theme.colorScheme.onPrimary,
               fontWeight: FontWeight.w600,

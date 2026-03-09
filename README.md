@@ -6,6 +6,8 @@
 ![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-blue)
+![CI/CD](https://img.shields.io/badge/CI-GitHub%20Actions-blueviolet?logo=github-actions)
+![Test](https://img.shields.io/badge/tests-19%2B-brightgreen)
 
 ---
 
@@ -159,8 +161,16 @@ No `.env` file or API keys needed. See `.env.example` for future configuration p
 
 ### Automated
 
+Unit tests cover state managers (Cubits), repository logic, and data persistence:
+
 ```bash
+# Run all tests
 flutter test
+
+# Run specific feature tests
+flutter test test/features/phrases
+flutter test test/features/settings
+flutter test test/features/free_text
 ```
 
 Widget tests cover semantic tree structure and touch target compliance using Flutter's built-in accessibility guidelines:
@@ -170,6 +180,16 @@ expect(tester, meetsGuideline(androidTapTargetGuideline));
 expect(tester, meetsGuideline(labeledTapTargetGuideline));
 expect(tester, meetsGuideline(textContrastGuideline));
 ```
+
+### Continuous Integration
+
+This project uses **GitHub Actions** for CI. Every push and pull request triggers a pipeline that performs:
+- **Dependency Cache**: Speeds up runs by caching Flutter SDK and Pub packages.
+- **Code Format**: Verifies strict adherence to Dart's style guide via `dart format`.
+- **Static Analysis**: Detects errors and warnings using `flutter analyze`.
+- **Test Suite**: Executing full unit and widget test suites.
+
+Workflow configuration can be found in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ### Manual accessibility testing
 
@@ -189,15 +209,13 @@ See [`docs/testing-checklist.md`](docs/testing-checklist.md) for the full per-sc
 
 ```
 voz_clara/
-├── lib/
-├── test/
-│   ├── unit/
-│   ├── widget/
-│   └── accessibility/
-├── docs/
-│   ├── accessibility-decisions.md
-│   └── testing-checklist.md
-├── .env.example
+├── .github/workflows/ # CI Pipeline definitions
+├── lib/               # App code (Clean Architecture)
+├── test/              # Test suites
+│   ├── features/      # Unit and Widget tests per feature
+│   └── shared/        # Shared component tests
+├── docs/              # Detailed accessibility documentation
+├── .env.example       # Environment configuration stub
 └── README.md
 ```
 

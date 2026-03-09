@@ -11,40 +11,38 @@ import 'package:flutter/material.dart';
 abstract final class AppColors {
   // --- Default theme ---
 
-  /// Primary brand color.
-  /// On white (#FFFFFF): contrast ratio 4.61:1 ✅ AA normal text
-  static const Color primary = Color(0xFF1B5E8A);
+  /// Surface / screen background.
+  static const Color surface = Color(0xFFF8F9FB);
 
-  /// Primary container (lighter tint for card backgrounds).
-  /// Text on this surface must use [onPrimaryContainer].
-  static const Color primaryContainer = Color(0xFFD6E8F7);
+  /// Premium Blue - Main accent.
+  static const Color primary = Color(0xFF3B82F6);
+
+  /// Light Blue - Icon backgrounds.
+  static const Color primaryContainer = Color(0xFFCADCFF);
 
   /// Text on [primaryContainer].
-  /// On [primaryContainer] (#D6E8F7): contrast ratio 7.2:1 ✅ AAA
   static const Color onPrimaryContainer = Color(0xFF0D2E45);
 
-  /// Surface / screen background.
-  static const Color surface = Color(0xFFF8FAFB);
+  /// Dark Gray - Main titles.
+  static const Color onSurface = Color(0xFF2D3748);
 
-  /// Primary text on [surface].
-  /// On [surface] (#F8FAFB): contrast ratio 16.1:1 ✅ AAA
-  static const Color onSurface = Color(0xFF1A1A2E);
-
-  /// Secondary text / subtitles on [surface].
-  /// On [surface] (#F8FAFB): contrast ratio 5.9:1 ✅ AA
-  static const Color onSurfaceVariant = Color(0xFF4A4A6A);
+  /// Medium Gray - Section labels.
+  static const Color onSurfaceVariant = Color(0xFF718096);
 
   /// Emergency category — red.
-  /// On white: contrast ratio 4.8:1 ✅ AA
-  static const Color emergency = Color(0xFFC0392B);
+  static const Color emergency = Color(0xFFEF4444);
 
   /// Favorite / active accent.
-  /// On white: contrast ratio 3.2:1 ✅ AA large text only
-  /// Used only for icons ≥ 18pt, never for body text alone.
   static const Color favorite = Color(0xFFE67E22);
 
   /// Success / confirmation.
-  static const Color success = Color(0xFF1A6B3A);
+  static const Color success = Color(0xFF10B981);
+
+  /// Disable Button Background
+  static const Color disable = Color(0xFFECECEC);
+
+  /// Divider Color
+  static const Color divider = Color(0xFFCECECE);
 
   // --- High contrast theme overrides ---
 

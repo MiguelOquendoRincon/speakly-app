@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:voz_clara/features/phrases/data/repositories/phrases_repository_impl.dart';
 import 'app/app.dart';
 import 'app/service_locator.dart';
 
@@ -11,7 +12,7 @@ Future<void> main() async {
 
   // Hive initialization for local persistence
   await Hive.initFlutter();
-  // Phase 3+: register Hive adapters and open boxes here
+  await PhrasesRepositoryImpl.openBoxes();
 
   // Dependency injection
   await setupServiceLocator();

@@ -33,82 +33,56 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
 
-    // Modern color palette using theme colors
-    final cardBg = isEmergency
-        ? (isDark ? const Color(0xFF442222) : const Color(0xFFFEF2F2))
-        : theme.colorScheme.surface;
-
-    final borderColor = isEmergency
-        ? theme.colorScheme.error
-        : (isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.05));
-
-    final iconBg = isEmergency
-        ? theme.colorScheme.error
+    final bgColor = isEmergency
+        ? const Color(0xFFFFEBEB) // light red tint — emergency distinction
         : theme.colorScheme.primaryContainer;
 
-    final iconColor = isEmergency ? Colors.white : theme.colorScheme.primary;
+    final iconColor = isEmergency
+        ? const Color(0xFFC0392B)
+        : theme.colorScheme.primary;
 
     final labelColor = isEmergency
-        ? theme.colorScheme.error
-        : theme.colorScheme.onSurface;
+        ? const Color(0xFFC0392B)
+        : theme.colorScheme.onPrimaryContainer;
 
     return Semantics(
       label: SemanticsLabels.categoryCard(label),
       hint: SemanticsLabels.categoryCardHint(label),
       button: true,
+      // excludeSemantics prevents child Text and Icon widgets from
+      // creating redundant nodes in the semantic tree.
       excludeSemantics: true,
-      child: Container(
-        decoration: BoxDecoration(
-          color: cardBg,
+      child: Material(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
-          border: Border.all(color: borderColor, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: AppDimensions.kCategoryCardMinHeight,
             ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(AppDimensions.kRadiusL),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: AppDimensions.kSpacingL,
-                horizontal: AppDimensions.kSpacingM,
-              ),
+              padding: const EdgeInsets.all(AppDimensions.kSpacingM),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Circular Icon Container
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Icon(icon, size: 32, color: iconColor),
-                    ),
+                  ExcludeSemantics(
+                    child: Icon(icon, size: 36, color: iconColor),
                   ),
-                  const SizedBox(height: AppDimensions.kSpacingM),
+                  const SizedBox(height: AppDimensions.kSpacingS),
                   Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       color: labelColor,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
+                      fontWeight: FontWeight.w600,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    // Allow text to scale — never clamp or overflow-hide
+                    // category labels. They are the primary navigation.
+                    overflow: TextOverflow.visible,
+                    softWrap: true,
                   ),
                 ],
               ),

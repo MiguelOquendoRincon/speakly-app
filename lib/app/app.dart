@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
 import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cubit.dart';
-import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'package:voz_clara/features/favorites/presentation/cubit/quick_phrases_cubit.dart';
 import '../core/theme/app_theme.dart';
 import 'router.dart';
 import 'service_locator.dart';
@@ -16,9 +17,10 @@ class VozClaraApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingsCubit>(create: (_) => sl<SettingsCubit>()),
-        BlocProvider<FavoritesCubit>(
-          create: (_) => sl<FavoritesCubit>()..loadFavorites(),
+        BlocProvider<QuickPhrasesCubit>(
+          create: (_) => sl<QuickPhrasesCubit>()..load(),
         ),
+        BlocProvider<TtsCubit>(create: (_) => sl<TtsCubit>()),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         buildWhen: (prev, curr) =>

@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:voz_clara/features/favorites/domain/repositories/favorites_repository.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/quick_phrases_cubit.dart';
 import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import 'package:voz_clara/features/phrases/domain/repositories/phrases_repository.dart';
 
 class MockPhrasesRepository extends Mock implements PhrasesRepository {}
 
+class MockFavoritesRepository extends Mock implements FavoritesRepository {}
+
 void main() {
   late QuickPhrasesCubit cubit;
   late MockPhrasesRepository mockPhrasesRepository;
+  late MockFavoritesRepository mockFavoritesRepository;
 
   setUp(() {
     mockPhrasesRepository = MockPhrasesRepository();
-    cubit = QuickPhrasesCubit(mockPhrasesRepository);
+    mockFavoritesRepository = MockFavoritesRepository();
+    cubit = QuickPhrasesCubit(
+      phrasesRepository: mockPhrasesRepository,
+      favoritesRepository: mockFavoritesRepository,
+    );
   });
 
   tearDown(() {
@@ -37,6 +45,9 @@ void main() {
 
     test('load emits [loading, loaded] with data from repository', () async {
       // Arrange
+      when(
+        () => mockFavoritesRepository.getFavorites(),
+      ).thenAnswer((_) async => []);
       when(
         () => mockPhrasesRepository.getFavoriteIds(),
       ).thenAnswer((_) async => ['1']);

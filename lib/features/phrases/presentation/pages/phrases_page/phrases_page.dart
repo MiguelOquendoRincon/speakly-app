@@ -30,15 +30,8 @@ class PhrasesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<PhrasesCubit>(
-          create: (_) => sl<PhrasesCubit>()..loadPhrases(categoryId),
-        ),
-        // TtsCubit is a singleton — we provide the existing instance,
-        // not a new one. BlocProvider.value for pre-existing instances.
-        BlocProvider.value(value: sl<TtsCubit>()),
-      ],
+    return BlocProvider<PhrasesCubit>(
+      create: (_) => sl<PhrasesCubit>()..loadPhrases(categoryId),
       child: _PhrasesView(categoryLabel: categoryLabel),
     );
   }

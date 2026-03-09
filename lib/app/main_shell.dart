@@ -1,14 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/app/service_locator.dart';
 import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
-import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cubit.dart';
-import 'package:voz_clara/features/settings/presentation/pages/settings_page.dart';
+import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
 import '../core/accessibility/semantics_labels.dart';
-import '../features/categories/presentation/pages/categories_page.dart';
-import '../features/favorites/presentation/pages/favorites_page.dart';
-import '../features/free_text/presentation/pages/free_text_page.dart';
 
 /// Main shell with bottom navigation.
 ///
@@ -30,15 +27,10 @@ import '../features/free_text/presentation/pages/free_text_page.dart';
 ///
 /// 5. IndexedStack keeps all pages alive — avoids re-announcing the screen
 ///    on every tab switch, which is disorienting for screen reader users.
-class MainShell extends StatefulWidget {
-  const MainShell({super.key});
+class MainShell extends StatelessWidget {
+  const MainShell({super.key, required this.navigationShell});
 
-  @override
-  State<MainShell> createState() => _MainShellState();
-}
-
-class _MainShellState extends State<MainShell> {
-  int _currentIndex = 0;
+  final StatefulNavigationShell navigationShell;
 
   static const _destinations = [
     _NavDestination(
@@ -67,24 +59,12 @@ class _MainShellState extends State<MainShell> {
     ),
   ];
 
-  // IndexedStack — all pages built once and kept alive.
-  // Avoids re-triggering initState screen announcements on every tab switch.
-  static final _pages = [
-    const CategoriesPage(),
-    const FreeTextPage(),
-    const FavoritesPage(),
-    const SettingsPage(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHC = context.select<SettingsCubit, bool>(
-      (cubit) => cubit.state.isHighContrast,
-    );
 
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: navigationShell,
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -101,8 +81,16 @@ class _MainShellState extends State<MainShell> {
             },
           ),
           NavigationBar(
-            selectedIndex: _currentIndex,
-            onDestinationSelected: (i) => setState(() => _currentIndex = i),
+            selectedIndex: navigationShell.currentIndex,
+            onDestinationSelected: (i) {
+              navigationShell.goBranch(
+                i,
+                initialLocation: i == navigationShell.currentIndex,
+              );
+              if (i == 2) {
+                context.read<FavoritesCubit>().loadFavorites();
+              }
+            },
             backgroundColor: theme.colorScheme.surface,
             elevation: 8,
             destinations: _destinations.map((d) {

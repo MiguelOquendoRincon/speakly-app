@@ -11,14 +11,21 @@ import 'package:voz_clara/features/phrases/domain/repositories/phrases_repositor
 ///
 /// Box keys are constants to prevent typo-driven bugs.
 class PhrasesRepositoryImpl implements PhrasesRepository {
+  PhrasesRepositoryImpl({Box? favBox, Box? histBox})
+    : _favBoxOverride = favBox,
+      _histBoxOverride = histBox;
+
   static const _favoritesBoxKey = 'favorites';
   static const _historyBoxKey = 'history';
   static const _favoritesKey = 'favorite_ids';
   static const _historyKey = 'history_ids';
   static const _historyMaxLength = 20;
 
-  Box get _favBox => Hive.box(_favoritesBoxKey);
-  Box get _histBox => Hive.box(_historyBoxKey);
+  final Box? _favBoxOverride;
+  final Box? _histBoxOverride;
+
+  Box get _favBox => _favBoxOverride ?? Hive.box(_favoritesBoxKey);
+  Box get _histBox => _histBoxOverride ?? Hive.box(_historyBoxKey);
 
   // Called once in main() before runApp.
   static Future<void> openBoxes() async {

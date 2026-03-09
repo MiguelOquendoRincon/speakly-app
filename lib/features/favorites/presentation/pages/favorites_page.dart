@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
+import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../../../../core/constants/app_dimensions.dart';
 
@@ -36,24 +38,24 @@ class FavoritesPage extends StatelessWidget {
                     return ListView.separated(
                       padding: const EdgeInsets.all(AppDimensions.kSpacingL),
                       itemCount: favorites.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const SizedBox(height: AppDimensions.kSpacingM),
                       itemBuilder: (context, index) {
                         final phrase = favorites[index];
                         return _FavoriteItemCard(
-                          phrase: phrase.text,
+                          phrase: phrase,
                           onTap: () {
-                            // Phase 4: Integración real con TtsService
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Reproduciendo: ${phrase.text}'),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
+                            if (phrase.isCustom) {
+                              context.read<TtsCubit>().speakFreeText(
+                                phrase.text,
+                              );
+                            } else {
+                              context.read<TtsCubit>().speakPhrase(phrase.id);
+                            }
                           },
                           onDelete: () {
                             context.read<FavoritesCubit>().removeFavorite(
-                              phrase.id,
+                              phrase,
                             );
                           },
                         );
@@ -131,7 +133,7 @@ class _EmptyFavoritesView extends StatelessWidget {
 }
 
 class _FavoriteItemCard extends StatelessWidget {
-  final String phrase;
+  final Phrase phrase;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
@@ -177,29 +179,44 @@ class _FavoriteItemCard extends StatelessWidget {
                 children: [
                   // Play Icon (Circular matching design)
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primaryContainer,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Icon(
-                        Icons.volume_up_rounded,
+                        phrase.icon,
                         color: theme.colorScheme.primary,
-                        size: 20,
+                        size: 24,
                       ),
                     ),
                   ),
                   const SizedBox(width: AppDimensions.kSpacingM),
                   Expanded(
-                    child: Text(
-                      phrase,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.3,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          phrase.text,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        if (phrase.subtitle != null &&
+                            phrase.subtitle!.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            phrase.subtitle!,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                   const SizedBox(width: AppDimensions.kSpacingS),

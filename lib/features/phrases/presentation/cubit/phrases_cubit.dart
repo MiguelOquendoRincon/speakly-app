@@ -42,7 +42,8 @@ class PhrasesCubit extends Cubit<PhrasesState> {
     // Optimistic update — update UI immediately, then persist.
     // If persistence fails, we revert. This avoids a visible lag
     // on the favorite toggle for users with slow storage.
-    final updated = List<String>.from(state.favoriteIds);
+    final previousIds = state.favoriteIds;
+    final updated = List<String>.from(previousIds);
     if (isFav) {
       updated.remove(phraseId);
     } else {
@@ -58,7 +59,7 @@ class PhrasesCubit extends Cubit<PhrasesState> {
       }
     } catch (_) {
       // Revert on failure
-      emit(state.copyWith(favoriteIds: state.favoriteIds));
+      emit(state.copyWith(favoriteIds: previousIds));
     }
   }
 }

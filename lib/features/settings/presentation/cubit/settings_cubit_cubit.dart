@@ -15,6 +15,9 @@ class SettingsCubit extends Cubit<SettingsState> {
   void toggleReduceMotion() =>
       emit(state.copyWith(reduceMotion: !state.reduceMotion));
 
+  void toggleLargeText() =>
+      emit(state.copyWith(useLargeText: !state.useLargeText));
+
   Future<void> setSpeechRate(double rate) async {
     final clampedRate = rate.clamp(0.1, 1.0);
     emit(state.copyWith(ttsSpeechRate: clampedRate));

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voz_clara/app/service_locator.dart';
 import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
 import 'package:voz_clara/features/free_text/presentation/cubit/free_text_cubit.dart';
-import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'package:voz_clara/features/favorites/presentation/cubit/quick_phrases_cubit.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../shared/widgets/speak_button.dart';
 import '../../../../shared/widgets/accessible_button.dart';
@@ -56,7 +56,7 @@ class _FreeTextSelectionViewState extends State<_FreeTextSelectionView> {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
-    context.read<FavoritesCubit>().addFavorite(text, isCustom: true);
+    context.read<QuickPhrasesCubit>().addFavorite(text, isCustom: true);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

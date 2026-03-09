@@ -72,7 +72,7 @@ void main() {
       });
 
       test('addToHistory moves phrase to front and caps length', () async {
-        final initialHistory = List.generate(20, (i) => 'old_$i');
+        final initialHistory = List.generate(15, (i) => 'old_$i');
         when(() => mockHistBox.get('history_ids')).thenReturn(initialHistory);
         when(
           () => mockHistBox.put('history_ids', any()),
@@ -87,7 +87,7 @@ void main() {
                 ).captured.first
                 as List<String>;
         expect(verification.first, 'new_phrase');
-        expect(verification.length, 20);
+        expect(verification.length, 15);
         expect(verification.contains('old_19'), isFalse); // Last one dropped
       });
 

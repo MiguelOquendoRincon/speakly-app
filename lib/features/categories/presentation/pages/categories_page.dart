@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../settings/presentation/cubit/settings_cubit_cubit.dart';
+import '../../../phrases/presentation/cubit/tts_cubit.dart';
 import '../../../../core/accessibility/semantics_labels.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../shared/widgets/voz_clara_app_bar.dart';
@@ -120,7 +121,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                 icon: qr.icon,
                                 color: qr.color,
                                 onTap: () {
-                                  // Phase 4: trigger TTS
+                                  context.read<TtsCubit>().speakFreeText(
+                                    qr.label,
+                                  );
                                 },
                               ),
                             ),
@@ -302,6 +305,7 @@ class _QuickResponseButton extends StatelessWidget {
                   const SizedBox(height: AppDimensions.kSpacingS),
                   Text(
                     label,
+                    textAlign: TextAlign.center,
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: isHC ? Colors.white : theme.colorScheme.onSurface,
                       fontWeight: FontWeight.w900,

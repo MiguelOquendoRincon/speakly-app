@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:voz_clara/app/service_locator.dart';
 import 'package:voz_clara/features/phrases/presentation/cubit/tts_cubit.dart';
-import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'package:voz_clara/features/favorites/presentation/cubit/quick_phrases_cubit.dart';
 import '../core/accessibility/semantics_labels.dart';
 
 /// Main shell with bottom navigation.
@@ -71,7 +70,6 @@ class MainShell extends StatelessWidget {
           // Global Accessibility Announcer — listens to TtsCubit for status/text announcements.
           // This replaces deprecated fire-and-forget Announce events with semantic properties.
           BlocBuilder<TtsCubit, TtsState>(
-            bloc: sl<TtsCubit>(),
             builder: (context, state) {
               return Semantics(
                 liveRegion: true,
@@ -88,7 +86,7 @@ class MainShell extends StatelessWidget {
                 initialLocation: i == navigationShell.currentIndex,
               );
               if (i == 2) {
-                context.read<FavoritesCubit>().loadFavorites();
+                context.read<QuickPhrasesCubit>().load();
               }
             },
             backgroundColor: theme.colorScheme.surface,

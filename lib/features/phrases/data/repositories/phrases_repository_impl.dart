@@ -19,7 +19,7 @@ class PhrasesRepositoryImpl implements PhrasesRepository {
   static const _historyBoxKey = 'history';
   static const _favoritesKey = 'favorite_ids';
   static const _historyKey = 'history_ids';
-  static const _historyMaxLength = 20;
+  static const _historyMaxLength = 15;
 
   final Box? _favBoxOverride;
   final Box? _histBoxOverride;

@@ -54,9 +54,8 @@ class SettingsPage extends StatelessWidget {
                           description:
                               'Aumenta el tamaño de la fuente del sistema',
                           icon: Icons.text_fields_rounded,
-                          value:
-                              false, // Placeholder para futura implementación
-                          onChanged: (_) {},
+                          value: settings.useLargeText,
+                          onChanged: (_) => cubit.toggleLargeText(),
                         ),
                         const SizedBox(height: AppDimensions.kSpacingM),
 
@@ -213,7 +212,7 @@ class _SettingSwitchCard extends StatelessWidget {
             Switch.adaptive(
               value: value,
               onChanged: onChanged,
-              activeColor: theme.colorScheme.primary,
+              activeTrackColor: theme.colorScheme.primary,
             ),
           ],
         ),

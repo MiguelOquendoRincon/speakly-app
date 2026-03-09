@@ -8,6 +8,7 @@ import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cu
 import 'package:voz_clara/features/favorites/domain/repositories/favorites_repository.dart';
 import 'package:voz_clara/features/favorites/data/repositories/mock_favorites_repository.dart';
 import 'package:voz_clara/features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'package:voz_clara/features/free_text/presentation/cubit/free_text_cubit.dart';
 import '../shared/services/tts_service.dart';
 
 final GetIt sl = GetIt.instance;
@@ -36,10 +37,14 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerFactory<SettingsCubit>(() => SettingsCubit(sl<TtsService>()));
   sl.registerFactory<FavoritesCubit>(
-    () => FavoritesCubit(repository: sl<FavoritesRepository>()),
+    () => FavoritesCubit(
+      favoritesRepository: sl<FavoritesRepository>(),
+      phrasesRepository: sl<PhrasesRepository>(),
+    ),
   );
   sl.registerFactory<PhrasesCubit>(() => PhrasesCubit(sl<PhrasesRepository>()));
   sl.registerFactory<QuickPhrasesCubit>(
     () => QuickPhrasesCubit(sl<PhrasesRepository>()),
   );
+  sl.registerFactory<FreeTextCubit>(() => FreeTextCubit());
 }

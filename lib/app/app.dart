@@ -21,7 +21,9 @@ class VozClaraApp extends StatelessWidget {
         ),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
-        buildWhen: (prev, curr) => prev.isHighContrast != curr.isHighContrast,
+        buildWhen: (prev, curr) =>
+            prev.isHighContrast != curr.isHighContrast ||
+            prev.useLargeText != curr.useLargeText,
         builder: (context, settings) {
           return MaterialApp.router(
             title: 'VozClara',
@@ -37,6 +39,18 @@ class VozClaraApp extends StatelessWidget {
                 : ThemeMode.light,
 
             routerConfig: appRouter,
+
+            // Aplicar escalado de texto global
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: TextScaler.linear(
+                    settings.useLargeText ? 1.25 : 1.0,
+                  ),
+                ),
+                child: child!,
+              );
+            },
           );
         },
       ),

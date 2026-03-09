@@ -97,7 +97,7 @@ class _PhrasesView extends StatelessWidget {
                       return ListView.separated(
                         padding: const EdgeInsets.all(AppDimensions.kSpacingM),
                         itemCount: phrasesState.phrases.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: AppDimensions.kSpacingM),
                         itemBuilder: (context, i) {
                           final phrase = phrasesState.phrases[i];

@@ -9,6 +9,12 @@ import '../core/theme/app_theme.dart';
 import 'router.dart';
 import 'service_locator.dart';
 
+/// Root widget of VozClara.
+///
+/// Provides app-wide Cubits ([SettingsCubit], [QuickPhrasesCubit], [TtsCubit]),
+/// wires the router, applies the correct theme based on accessibility settings,
+/// and overrides the global [MediaQuery.textScaler] to honour the large-text
+/// preference from [SettingsCubit].
 class VozClaraApp extends StatelessWidget {
   const VozClaraApp({super.key});
 

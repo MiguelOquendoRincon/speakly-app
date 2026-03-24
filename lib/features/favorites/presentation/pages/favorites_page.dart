@@ -6,10 +6,10 @@ import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../../../../core/constants/app_dimensions.dart';
 
-/// Pantalla de Favoritos e Historial.
+/// Favorites and History screen.
 ///
-/// Refactorizada para incluir pestañas que permitan alternar entre
-/// las frases guardadas y las recientemente utilizadas.
+/// Displays two tabs: saved favorite phrases and the last 15 recently
+/// spoken phrases. Backed by [QuickPhrasesCubit].
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
 

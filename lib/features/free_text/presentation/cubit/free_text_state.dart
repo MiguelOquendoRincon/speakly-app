@@ -1,5 +1,9 @@
 part of 'free_text_cubit.dart';
 
+/// Immutable state for [FreeTextCubit].
+///
+/// [announcement] is a transient string emitted at character-count thresholds
+/// and cleared shortly after to allow re-emission of the same message.
 class FreeTextState extends Equatable {
   const FreeTextState({
     this.text = '',

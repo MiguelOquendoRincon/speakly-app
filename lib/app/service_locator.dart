@@ -10,6 +10,7 @@ import 'package:voz_clara/features/favorites/data/repositories/mock_favorites_re
 import 'package:voz_clara/features/free_text/presentation/cubit/free_text_cubit.dart';
 import '../shared/services/tts_service.dart';
 
+/// Global service locator instance. Use `sl<T>()` to resolve dependencies.
 final GetIt sl = GetIt.instance;
 
 /// Register all dependencies here before [runApp].

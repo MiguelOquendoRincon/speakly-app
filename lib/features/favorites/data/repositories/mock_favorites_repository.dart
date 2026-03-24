@@ -1,6 +1,10 @@
 import 'package:voz_clara/features/phrases/domain/entities/phrase.dart';
 import '../../domain/repositories/favorites_repository.dart';
 
+/// In-memory implementation of [FavoritesRepository].
+///
+/// Intended for use during development and testing. State is not persisted
+/// across app restarts. Duplicates are deduplicated by phrase text (case-insensitive).
 class MockFavoritesRepository implements FavoritesRepository {
   final List<Phrase> _favorites = [];
 

@@ -4,8 +4,12 @@ part of 'phrases_cubit.dart';
 // State
 // ---------------------------------------------------------------------------
 
+/// Lifecycle status for a [PhrasesCubit] data load.
 enum PhrasesStatus { initial, loading, loaded, error }
 
+/// Immutable state for [PhrasesCubit].
+///
+/// Holds the phrase list, the set of favorited phrase IDs, and load status.
 final class PhrasesState extends Equatable {
   const PhrasesState({
     this.status = PhrasesStatus.initial,

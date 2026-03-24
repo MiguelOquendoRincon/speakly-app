@@ -1,5 +1,8 @@
 part of 'settings_cubit_cubit.dart';
 
+/// Immutable state for [SettingsCubit].
+///
+/// All flags default to `false`; [ttsSpeechRate] defaults to `0.5` (flutter_tts midpoint).
 class SettingsState extends Equatable {
   const SettingsState({
     this.isHighContrast = false,

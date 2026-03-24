@@ -4,9 +4,15 @@ import '../../../../core/accessibility/semantics_labels.dart';
 
 part 'free_text_state.dart';
 
+/// Manages text composition state for the free-text screen.
+///
+/// Tracks the current message and emits accessibility announcements
+/// at character-count thresholds (50, 20, 10 remaining) via [FreeTextState.announcement].
 class FreeTextCubit extends Cubit<FreeTextState> {
   FreeTextCubit() : super(const FreeTextState());
 
+  /// Updates the composed text and triggers an accessibility announcement
+  /// when character count crosses defined thresholds.
   void onTextChanged(String text) {
     String? announcement;
     final remaining = state.maxLength - text.length;
@@ -28,6 +34,7 @@ class FreeTextCubit extends Cubit<FreeTextState> {
     }
   }
 
+  /// Clears the composed message and resets any pending announcement.
   void clearText() {
     emit(state.copyWith(text: '', announcement: null));
   }

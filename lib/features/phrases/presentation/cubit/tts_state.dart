@@ -4,8 +4,14 @@ part of 'tts_cubit.dart';
 // State
 // ---------------------------------------------------------------------------
 
+/// Playback lifecycle for the TTS engine.
 enum TtsStatus { idle, speaking, error }
 
+/// Immutable state for [TtsCubit].
+///
+/// [activePhraseId] identifies which phrase is currently being spoken, enabling
+/// per-card visual feedback. [announcement] is a transient string broadcast to
+/// screen-reader live regions and cleared shortly after emission.
 final class TtsState extends Equatable {
   const TtsState({
     this.status = TtsStatus.idle,

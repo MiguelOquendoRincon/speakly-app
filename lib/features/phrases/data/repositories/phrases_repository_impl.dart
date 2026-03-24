@@ -27,7 +27,8 @@ class PhrasesRepositoryImpl implements PhrasesRepository {
   Box get _favBox => _favBoxOverride ?? Hive.box(_favoritesBoxKey);
   Box get _histBox => _histBoxOverride ?? Hive.box(_historyBoxKey);
 
-  // Called once in main() before runApp.
+  /// Opens the Hive boxes required by this repository.
+  /// Must be called once in `main()` before [runApp].
   static Future<void> openBoxes() async {
     await Hive.openBox(_favoritesBoxKey);
     await Hive.openBox(_historyBoxKey);

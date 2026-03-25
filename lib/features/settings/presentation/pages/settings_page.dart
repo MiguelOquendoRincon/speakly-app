@@ -6,13 +6,11 @@ import 'package:voz_clara/features/settings/presentation/cubit/settings_cubit_cu
 import '../../../../shared/widgets/voz_clara_app_bar.dart';
 import '../../../../core/constants/app_dimensions.dart';
 
-/// Pantalla de Configuración de Accesibilidad.
+/// Accessibility Settings screen.
 ///
-/// Mejorada siguiendo la guía visual premium:
-/// - Tarjetas con iconos circulares.
-/// - Secciones claramente divididas.
-/// - Control de velocidad de voz con slider y etiquetas de escala.
-/// - Nota informativa al final.
+/// Exposes visual preferences (high contrast, large text, reduced motion)
+/// and audio preferences (TTS speech rate with a live test button).
+/// All settings are applied immediately via [SettingsCubit].
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 

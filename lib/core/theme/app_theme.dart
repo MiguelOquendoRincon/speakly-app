@@ -5,7 +5,15 @@ import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../constants/app_dimensions.dart';
 
+/// Centralizes theme construction for VozClara.
+///
+/// Two themes are exposed:
+/// - [defaultTheme]: standard light theme.
+/// - [highContrastTheme]: dark/high-contrast theme for accessibility.
+///
+/// Both enforce WCAG-compliant minimum touch targets and a visible focus ring.
 abstract final class AppTheme {
+  /// Standard light theme using [AppColors] default palette.
   static ThemeData get defaultTheme => _buildTheme(
     brightness: Brightness.light,
     surface: AppColors.surface,
@@ -17,6 +25,7 @@ abstract final class AppTheme {
     dividerColor: AppColors.divider,
   );
 
+  /// High-contrast dark theme using [AppColors] HC palette (yellow on black).
   static ThemeData get highContrastTheme => _buildTheme(
     brightness: Brightness.dark,
     surface: AppColors.hcSurface,

@@ -10,7 +10,10 @@ import '../../../../shared/widgets/speak_button.dart';
 import '../../../../shared/widgets/accessible_button.dart';
 import '../../../../shared/widgets/voz_clara_app_bar.dart';
 
-/// Pantalla del Compositor de Mensajes.
+/// Message Composer screen.
+///
+/// Allows the user to type a custom message and speak it aloud via [TtsCubit],
+/// or save it to favorites via [QuickPhrasesCubit].
 class FreeTextPage extends StatelessWidget {
   const FreeTextPage({super.key});
 

@@ -7,6 +7,10 @@ import 'package:voz_clara/features/phrases/data/repositories/phrases_repository_
 import 'app/app.dart';
 import 'app/service_locator.dart';
 
+/// Application entry point.
+///
+/// Initializes Hive persistence, registers dependencies, locks the device
+/// to portrait orientation, and launches [VozClaraApp].
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

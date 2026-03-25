@@ -94,6 +94,8 @@ class TtsCubit extends Cubit<TtsState> {
   }
 }
 
+/// Temporary local extension until the project migrates to Dart 3's
+/// built-in [Iterable.firstOrNull].
 extension<T> on List<T> {
   T? get firstOrNull => isEmpty ? null : first;
 }

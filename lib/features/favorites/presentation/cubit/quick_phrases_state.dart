@@ -1,7 +1,9 @@
 part of 'quick_phrases_cubit.dart';
 
+/// Lifecycle status for the [QuickPhrasesCubit] data load.
 enum QuickPhrasesStatus { initial, loading, loaded }
 
+/// Immutable state for the Quick Phrases / Favorites screen.
 final class QuickPhrasesState extends Equatable {
   const QuickPhrasesState({
     this.status = QuickPhrasesStatus.initial,

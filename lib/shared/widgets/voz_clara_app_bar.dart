@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_dimensions.dart';
 
-/// App bar compartido diseñado siguiendo el estilo premium de VozClara.
+/// Shared app bar for VozClara screens.
 ///
-/// Características:
-/// - Botón de retroceso con fondo circular suave.
-/// - Título centrado y en negrita.
-/// - Divisor inferior sutil.
-/// - Navegación automática a la pantalla de inicio (Frases) al presionar atrás.
+/// Features a centered bold title, an optional circular back button, and a
+/// subtle bottom divider. The back button pops the navigator if possible,
+/// otherwise navigates to the root route (`/`).
+///
+/// Implements [PreferredSizeWidget] so it can be used as a [Scaffold.appBar].
 class VozClaraAppBar extends StatelessWidget implements PreferredSizeWidget {
   const VozClaraAppBar({
     super.key,
